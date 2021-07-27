@@ -6,7 +6,7 @@ function Header({ isLoggedIn }) {
   isLoggedIn = true;
   return (
     <header className="header">
-      <img className="header__logo" alt="" />
+      <NavLink className="header__logo button" to="/" />
       {isLoggedIn ? (
         <>
           <button className="header__button button" type="button" />
@@ -22,7 +22,7 @@ function Header({ isLoggedIn }) {
               </li>
               <li>
                 <NavLink
-                  to="/"
+                  to="/movies"
                   className="header__link button"
                 >
                   Фильмы
@@ -30,7 +30,7 @@ function Header({ isLoggedIn }) {
               </li>
               <li>
                 <NavLink
-                  to="/"
+                  to="/saved-movies"
                   className="header__link button"
                 >
                   Сохранённые фильмы
