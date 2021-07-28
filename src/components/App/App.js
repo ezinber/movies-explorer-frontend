@@ -4,7 +4,11 @@ import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
+import Profile from '../Profile/Profile';
+//import Preloader from '../Preloader/Preloader';
 import './App.css';
+import Register from '../Register/Register';
+import Login from '../Login/Login';
 
 function App() {
   return (
@@ -24,6 +28,16 @@ function App() {
           <Header />
           <SavedMovies />
           <Footer />
+        </Route>
+        <Route path="/profile">
+          <Header />
+          <Profile />
+        </Route>
+        <Route path="/register">
+          <Register />
+        </Route>
+        <Route path="/login">
+          <Login />
         </Route>
       </Switch>
     </div>

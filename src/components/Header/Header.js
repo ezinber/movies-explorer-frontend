@@ -1,12 +1,16 @@
 import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
+
+import Logo from '../Logo/Logo';
+
 import './Header.css';
 
 function Header({ isLoggedIn }) {
-  isLoggedIn = true;
+  isLoggedIn = false;
   return (
     <header className="header">
-      <NavLink className="header__logo button" to="/" />
+      <Logo />
+
       {isLoggedIn ? (
         <>
           <button className="header__button button" type="button" />
@@ -38,7 +42,7 @@ function Header({ isLoggedIn }) {
               </li>
               <li>
                 <NavLink
-                  to="/"
+                  to="/profile"
                   className="header__link header__link_type_grayscale-button button"
                 >
                   Аккаунт
@@ -51,7 +55,7 @@ function Header({ isLoggedIn }) {
         <ul className="header__menu">
           <li>
             <NavLink
-              to="/"
+              to="/register"
               className="header__link button"
             >
               Регистрация
@@ -59,7 +63,7 @@ function Header({ isLoggedIn }) {
           </li>
           <li>
             <NavLink
-              to="/"
+              to="/login"
               className="header__link header__link_type_colorful-button button"
             >
               Войти
