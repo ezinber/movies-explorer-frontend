@@ -1,12 +1,9 @@
 import { memo } from 'react';
 import './Profile.css';
 
-function Profile() {
-  const name = 'Пользователь';
-  const email = 'pocta@yandex.ru';
-
+function Profile({ name = 'Пользователь', email = 'pochta@yandex.ru'}) {
   return (
-    <section className="profile">
+    <main className="profile">
       <h1 className="profile__greetings">
         {`Привет, ${name}!`}
       </h1>
@@ -40,7 +37,7 @@ function Profile() {
           </button>
         </li>
       </ul>
-    </section>
+    </main>
   )
 }
 

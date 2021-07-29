@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import './MoviesCard.css';
 
-function MoviesCard({ movie }) {
+function MoviesCard({ movie, buttonStyle = 'saved' }) {
+  const buttonClassMod = ` movies-card__button_type_${buttonStyle}`
 
   return (
     <li className="movies-card">
@@ -15,9 +16,8 @@ function MoviesCard({ movie }) {
         <img className="movies-card__image" src={movie.image} alt={movie.nameRU} />
       </div>
       <button
-        className={`button movies-card__save-button${movie.isSaved ? ' movies-card__save-button_saved' : ''}`}
+        className={`button movies-card__button${movie.isSaved ? buttonClassMod : ''}`}
         type="button"
-        title="Сохранить"
       />
     </li>
   )

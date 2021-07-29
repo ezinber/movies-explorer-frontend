@@ -55,6 +55,11 @@
     flex-direction: column;
   }
 
+  .footer__about {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
   .footer__copyright {
     padding: 10px 0;
     font-size: 12px;

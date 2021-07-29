@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
 import Portfolio from '../Portfolio/Portfolio';
 import './AboutMe.css';
+import photo from '../../images/photo.jpg'
 
 function AboutMe() {
   return (
@@ -10,20 +10,24 @@ function AboutMe() {
         Студент
       </h2>
       <article className="about-me__card">
-        <img className="about-me__photo" src="https://picsum.photos/300/400" alt="me" />
+        <img className="about-me__photo" src={photo} alt="Михаил, фронтенд-разработчик" />
         <h3 className="about-me__name">
           Михаил
         </h3>
         <p className="about-me__info">
-          Фронтенд-разработчик, 30 лет
+          Фронтенд-разработчик, 31 год
         </p>
         <p className="about-me__description">
-          Я родился и живу в Саратове, закончил факультет экономики СГУ. У меня есть жена и дочь. Я люблю слушать музыку, а ещё увлекаюсь бегом. Недавно начал кодить. 
-          С 2015 года работал в компании «СКБ Контур». После того, как прошёл курс по веб-разработке, начал заниматься фриланс-заказами и ушёл с постоянной работы.
+          Я родился и живу в Москве, где получил высшее юридическое образование. Занимаюсь волонтёрством, изготовлением тактического снаряжения, увлекаюсь страйкболом. Люблю работать в слаженной команде, но готов и к самостоятельной работе. Закончил курс веб-разработки, свободное время посвящаю оттачиванию навыков и работе над пет-проектами.
         </p>
-        <Link className="about-me__link button" to="github.ru">
+        <a
+          className="about-me__link button"
+          href="https://github.com/ezinber"
+          target="_blank"
+          rel="noreferrer"
+        >
           Github
-        </Link>
+        </a>
       </article>
 
       <Portfolio />

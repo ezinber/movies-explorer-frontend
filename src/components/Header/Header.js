@@ -5,17 +5,17 @@ import Logo from '../Logo/Logo';
 
 import './Header.css';
 
-function Header({ isLoggedIn }) {
-  isLoggedIn = false;
+function Header({ isLoggedIn, onMenuClick }) {
+  const handleMenuClick = () => onMenuClick();
+
   return (
     <header className="header">
       <Logo />
 
       {isLoggedIn ? (
         <>
-          <button className="header__button button" type="button" />
           <nav>
-            <ul className="header__menu">
+            <ul className="header__menu header__menu_hidden">
               <li>
                 <NavLink
                   to="/"
@@ -50,6 +50,7 @@ function Header({ isLoggedIn }) {
               </li>
             </ul>
           </nav>
+          <button className="header__button button" type="button" onClick={handleMenuClick} />
         </>
       ) : (
         <ul className="header__menu">

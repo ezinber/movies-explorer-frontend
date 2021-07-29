@@ -22,6 +22,7 @@
 }
 
 .search-form__input {
+  padding: 0;
   width: 100%;
   flex: 1;
   background: none;
@@ -31,6 +32,10 @@
   font-weight: 400;
   font-size: 13px;
   line-height: 17px;
+}
+
+.search-form__input_type_error {
+  color: var(--color-accent-c, #EE3465);
 }
 
 .search-form__input::placeholder {
@@ -45,5 +50,10 @@
   background: var(--color-accent-b, #4285f4) url('../../images/search-icon.svg') no-repeat center;
   border: none;
   border-radius: 50%;
-  /*background: none;*/
+}
+
+@media screen and (max-width: 420px) {
+  .search-form {
+    padding: 60px 4px 70px;
+  }
 }

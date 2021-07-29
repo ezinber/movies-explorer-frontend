@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
 import './NavTab.css';
 
 function NavTab() {
@@ -7,19 +6,19 @@ function NavTab() {
     <nav>
       <ul className="navtab">
         <li>
-          <Link to="/#about-project" className="navtab__link button">
+          <a href="/#about-project" className="navtab__link button">
             О проекте
-          </Link>
+          </a>
         </li>
         <li>
-          <Link to="/#techs" className="navtab__link button">
+          <a href="/#techs" className="navtab__link button">
             Технологии
-          </Link>
+          </a>
         </li>
         <li>
-          <Link to="/#about-me" className="navtab__link button">
+          <a href="/#about-me" className="navtab__link button">
             Студент
-          </Link>
+          </a>
         </li>
       </ul>
     </nav>

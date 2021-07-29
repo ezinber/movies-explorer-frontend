@@ -3,30 +3,15 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import './SavedMovies.css';
 
-function Movies() {
-  const moviesList = [
-    {
-      _id: '3',
-      nameRU: '33 слова о дизайне',
-      duration: '1ч 47м',
-      image: 'https://picsum.photos/800/600',
-      isSaved: true,
-    },
-    {
-      _id: '5',
-      nameRU: '33 слова о дизайне',
-      duration: '1ч 47м',
-      image: 'https://picsum.photos/800/600',
-      isSaved: true,
-    },
-  ];
+function SavedMovies({ movies }) {
+  const savedMovies = movies?.filter(item => item.isSaved === true);
 
   return (
     <main className="movies">
       <SearchForm />
-      <MoviesCardList moviesList={moviesList} />
+      {savedMovies && <MoviesCardList moviesList={savedMovies} buttonStyle="delete" />}
     </main>
   )
 }
 
-export default memo(Movies);
+export default memo(SavedMovies);

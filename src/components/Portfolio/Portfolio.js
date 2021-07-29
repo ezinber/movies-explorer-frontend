@@ -12,7 +12,7 @@ function Portfolio() {
           <li className="portfolio__list-item">
             <a
               className="portfolio__link button"
-              href="https://ya.ru"
+              href="https://ezinber.github.io/how-to-learn"
               target="_blank"
               rel="noreferrer"
             >
@@ -22,7 +22,7 @@ function Portfolio() {
           <li className="portfolio__list-item">
             <a
               className="portfolio__link button"
-              href="https://ya.ru"
+              href="https://ezinber.github.io/russian-travel"
               target="_blank"
               rel="noreferrer"
             >
@@ -32,7 +32,7 @@ function Portfolio() {
           <li className="portfolio__list-item">
             <a
               className="portfolio__link button"
-              href="https://ya.ru"
+              href="https://mesto-frontend.ezinber.nomoredomains.club"
               target="_blank"
               rel="noreferrer"
             >
