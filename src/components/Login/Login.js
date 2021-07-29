@@ -23,7 +23,7 @@ function Login() {
         <span className="form__input-label">
           Пароль
         </span>
-        <input className="form__input" type="password" required />
+        <input className="form__input" type="password" minLength="8" required />
         <span className="form__input-label form__input-label_type_error">
           Error
         </span>
