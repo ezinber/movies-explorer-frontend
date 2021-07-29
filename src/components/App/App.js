@@ -9,6 +9,7 @@ import Profile from '../Profile/Profile';
 import './App.css';
 import Register from '../Register/Register';
 import Login from '../Login/Login';
+import NotFound from '../NotFound/NotFound';
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
         </Route>
         <Route path="/login">
           <Login />
+        </Route>
+        <Route path="/">
+          <NotFound />
         </Route>
       </Switch>
     </div>
