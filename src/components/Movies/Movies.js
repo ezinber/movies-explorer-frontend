@@ -8,6 +8,9 @@ function Movies({ movies }) {
     <main className="movies">
       <SearchForm />
       {movies && <MoviesCardList moviesList={movies} />}
+      <button className="movies__more-button button" type="button">
+        Ещё
+      </button>
     </main>
   )
 }

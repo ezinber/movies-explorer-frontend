@@ -4,7 +4,6 @@ import './MoviesCardList.css';
 
 function MoviesCardList({ moviesList, buttonStyle }) {
   return (
-    <>
       <ul className="movies-card-list">
         {moviesList.map(movie => (
           <MoviesCard
@@ -14,10 +13,6 @@ function MoviesCardList({ moviesList, buttonStyle }) {
           />
         ))}
       </ul>
-      <button className="movies-card-list__more-button button" type="button">
-        Ещё
-      </button>
-    </>
   )
 }
 
