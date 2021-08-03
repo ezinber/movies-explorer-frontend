@@ -2,12 +2,13 @@ import { memo } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import './MoviesCardList.css';
 
-function MoviesCardList({ moviesList, buttonStyle }) {
+function MoviesCardList({ movies, buttonStyle }) {
+
   return (
       <ul className="movies-card-list">
-        {moviesList.map(movie => (
+        {movies.map(movie => (
           <MoviesCard
-            key={movie._id}
+            key={movie.id}
             movie={movie}
             buttonStyle={buttonStyle}
           />

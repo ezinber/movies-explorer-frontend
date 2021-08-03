@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { getAllMovies } from '../../utils/MoviesApi';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
@@ -12,55 +13,11 @@ import Login from '../Login/Login';
 import NotFound from '../NotFound/NotFound';
 import Popup from '../Popup/Popup';
 
-const moviesList = [
-  {
-    _id: '1',
-    nameRU: '33 слова о дизайне',
-    duration: '1ч 47м',
-    image: 'https://picsum.photos/800/600',
-    isSaved: false,
-  },
-  {
-    _id: '2',
-    nameRU: '33 слова о дизайне',
-    duration: '1ч 47м',
-    image: 'https://picsum.photos/800/600',
-    isSaved: false,
-  },
-  {
-    _id: '3',
-    nameRU: '33 слова о дизайне',
-    duration: '1ч 47м',
-    image: 'https://picsum.photos/800/600',
-    isSaved: true,
-  },
-  {
-    _id: '4',
-    nameRU: '33 слова о дизайне',
-    duration: '1ч 47м',
-    image: 'https://picsum.photos/800/600',
-    isSaved: false,
-  },
-  {
-    _id: '5',
-    nameRU: '33 слова о дизайне',
-    duration: '1ч 47м',
-    image: 'https://picsum.photos/800/600',
-    isSaved: true,
-  },
-  {
-    _id: '6',
-    nameRU: '33 слова о дизайне',
-    duration: '1ч 47м',
-    image: 'https://picsum.photos/800/600',
-    isSaved: false,
-  },
-];
-
 function App() {
   const isLoggedIn = true;
   const [isNavigationPopupOpen, setIsNavigationPopupOpen] = useState(false);
   const [movies, setMovies] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const closeAllPopups = () => {
     setIsNavigationPopupOpen(false);
@@ -68,9 +25,36 @@ function App() {
 
   const handleNavigationClick = () => setIsNavigationPopupOpen(true);
 
+  const handleSearchSubmit = (searchValue, isChecked) => {
+    setIsLoading(true);
+    getAllMovies()
+      .then((res) => {
+        const filteredMovies = res.filter((item) => {
+          const name = item.nameRU.toLowerCase();
+          const search = searchValue.toLowerCase();
+          const isShort = item.duration <= 40;
+
+          if (isChecked) {
+            return name.includes(search) && isShort;
+          }
+
+          return name.includes(search);
+        })
+
+        localStorage.setItem('movies', JSON.stringify(filteredMovies));
+        setMovies(filteredMovies);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
+  }
+
+
   useEffect(() => {
-    setMovies(moviesList);
-  }, [])
+    if (!movies && localStorage.getItem('movies')) {
+      const localMovies = JSON.parse(localStorage.getItem('movies'));
+      setMovies(localMovies);
+    }
+  }, [movies])
 
   return (
     <div className="page">
@@ -89,7 +73,11 @@ function App() {
             isLoggedIn={isLoggedIn}
             onMenuClick={handleNavigationClick}
           />
-          <Movies movies={movies}/>
+          <Movies
+            movies={movies}
+            handleSearchSubmit={handleSearchSubmit}
+            isLoading={isLoading}
+          />
           <Footer />
         </Route>
 
