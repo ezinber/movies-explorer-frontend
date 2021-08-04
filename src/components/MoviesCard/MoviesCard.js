@@ -1,22 +1,16 @@
 import { memo } from 'react';
-import { VENDOR_URL } from '../../utils/MoviesApi';
+import { VENDOR_URL } from '../../config';
+import { calcMovieDuration } from '../../utils/MoviesUtils';
 import './MoviesCard.css';
 
-function MoviesCard({ movie, buttonStyle = 'saved' }) {
+function MoviesCard({
+  movie,
+  savedMovies,
+  isSaved = savedMovies?.some((item) => item.id === movie.id),
+  buttonStyle = 'saved'
+}) {
   const buttonClassMod = ` movies-card__button_type_${buttonStyle}`
-
-  const calcDuration = (t) => {
-    if (t > 59) {
-      const h = (t - t % 60) / 60;
-      const m = t % 60;
-
-      return `${h}ч ${m > 0 ? m + 'м' : ''}`
-    }
-
-    return `${t}м`;
-  }
-
-  const duration = calcDuration(movie.duration);
+  const duration = calcMovieDuration(movie.duration);
 
   return (
     <li className="movies-card">
@@ -34,7 +28,7 @@ function MoviesCard({ movie, buttonStyle = 'saved' }) {
         />
       </div>
       <button
-        className={`button movies-card__button${movie.isSaved ? buttonClassMod : ''}`}
+        className={`button movies-card__button${isSaved ? buttonClassMod : ''}`}
         type="button"
       />
     </li>

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import './MoviesCardList.css';
 
-function MoviesCardList({ movies, buttonStyle }) {
+function MoviesCardList({ movies, ...props }) {
 
   return (
       <ul className="movies-card-list">
@@ -10,7 +10,7 @@ function MoviesCardList({ movies, buttonStyle }) {
           <MoviesCard
             key={movie.id}
             movie={movie}
-            buttonStyle={buttonStyle}
+            {...props}
           />
         ))}
       </ul>

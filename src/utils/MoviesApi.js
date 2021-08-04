@@ -1,5 +1,4 @@
-export const VENDOR_URL = 'https://api.nomoreparties.co';
-export const AUTH_TOKEN = 'c0773531-78a8-4cdf-a081-1a1c757b9f2b';
+import { VENDOR_URL } from "../config";
 
 export const getAllMovies = () => {
   return fetch(`${VENDOR_URL}/beatfilm-movies`)
