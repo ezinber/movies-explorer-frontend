@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import './Form.css';
 
-function Form({ children, title, buttonName }) {
+function Form({ children, title, buttonName, onSubmit }) {
   return (
-    <form className="form">
+    <form className="form" onSubmit={onSubmit}>
       <h1 className="form__title">
         {title}
       </h1>

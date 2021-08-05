@@ -1,7 +1,9 @@
 import { memo } from 'react';
 import './Profile.css';
 
-function Profile({ name = 'Пользователь', email = 'pochta@yandex.ru'}) {
+function Profile({ userData, onLogout}) {
+  const { name, email } = userData;
+
   return (
     <main className="profile">
       <h1 className="profile__greetings">
@@ -32,7 +34,10 @@ function Profile({ name = 'Пользователь', email = 'pochta@yandex.ru'
           </button>
         </li>
         <li>
-          <button className="profile__button profile__button_type_colorful button">
+          <button
+            className="profile__button profile__button_type_colorful button"
+            onClick={onLogout}
+          >
             Выйти из профиля
           </button>
         </li>

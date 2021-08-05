@@ -5,8 +5,14 @@ import SearchForm from '../SearchForm/SearchForm';
 import Preloader from '../Preloader/Preloader';
 import './Movies.css';
 
-function Movies({ movies, savedMovies, handleSearchSubmit, isLoading }) {
-  const [moviesList, setMoviesList] = useState(movies);
+function Movies({
+  movies,
+  savedMovies,
+  handleSearchSubmit,
+  onClick,
+  isLoading
+}) {
+  const [moviesList, setMoviesList] = useState([]);
   const [initialCount, setInitialCount] = useState(0);
   const [additionCount, setAdditionCount] = useState(0);
 
@@ -33,7 +39,12 @@ function Movies({ movies, savedMovies, handleSearchSubmit, isLoading }) {
         isLoading
         ? <Preloader />
         : moviesList
-          && <MoviesCardList movies={moviesList} savedMovies={savedMovies} />
+          &&
+            <MoviesCardList
+              movies={moviesList}
+              savedMovies={savedMovies}
+              onClick={onClick}
+            />
       }
       {!isLoading && moviesList?.length < movies?.length &&
         <button

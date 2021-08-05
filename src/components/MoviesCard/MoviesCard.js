@@ -6,11 +6,16 @@ import './MoviesCard.css';
 function MoviesCard({
   movie,
   savedMovies,
+  onClick,
   isSaved = savedMovies?.some((item) => item.id === movie.id),
   buttonStyle = 'saved'
 }) {
   const buttonClassMod = ` movies-card__button_type_${buttonStyle}`
   const duration = calcMovieDuration(movie.duration);
+
+  const handleClickMovieButton = () => {
+    onClick(movie, isSaved);
+  }
 
   return (
     <li className="movies-card">
@@ -30,6 +35,8 @@ function MoviesCard({
       <button
         className={`button movies-card__button${isSaved ? buttonClassMod : ''}`}
         type="button"
+        onClick={handleClickMovieButton}
+        title={isSaved ? 'Убрать из сохранённых' : 'Сохранить'}
       />
     </li>
   )
