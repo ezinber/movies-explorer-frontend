@@ -39,3 +39,19 @@ export const setDisplayedMoviesCount = (initialCount, setInitialCount, setAddCou
     setAddCount(1);
   }
 }
+
+export const convertMovie = (res, url) => {
+  const movieData = {
+    ...res,
+    image: {
+      url: res.image.replace(url, ''),
+      formats: {
+        thumbnail: res.thumbnail.replace(url, ''),
+      }
+    },
+    trailerLink: res.trailer,
+    id: res.movieId,
+  }
+
+  return movieData;
+}

@@ -1,4 +1,5 @@
-import { BASE_URL } from "../config";
+import { BASE_URL, VENDOR_URL } from "../config";
+import { convertMovie } from "./MoviesUtils";
 
 export const register = (
   name,
@@ -60,12 +61,15 @@ export const saveMovie = ({
   year,
   description,
   image,
-  trailer,
+  trailerLink,
   nameRU,
   nameEN,
-  thumbnail,
-  movieId,
+  id,
 }) => {
+  const trailer = trailerLink.includes('http', 0)
+    ? trailerLink
+    : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
   return fetch(`${BASE_URL}/movies`, {
     method: 'POST',
     headers: {
@@ -73,19 +77,38 @@ export const saveMovie = ({
     },
     credentials: 'include',
     body: JSON.stringify({
-      country,
-      director,
+      country: country || '...',
+      director: director || '...',
       duration,
-      year,
-      description,
-      image,
+      year: year || '...',
+      description: description || '...',
+      image: VENDOR_URL + image.url,
       trailer,
-      nameRU,
-      nameEN,
-      thumbnail,
-      movieId,
+      nameRU: nameRU || '...',
+      nameEN: nameEN || '...',
+      thumbnail: VENDOR_URL + image.formats.thumbnail.url,
+      movieId: id,
     }),
   })
   .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+  .then((res) => convertMovie(res, VENDOR_URL))
 };
+
+export const deleteMovie = (movieId) => {
+  return fetch(`${BASE_URL}/movies/${movieId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  .then((res) =>
+    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+}
+
+export const getSavedMovies = () => {
+  return fetch(`${BASE_URL}/movies`, {
+    credentials: 'include',
+  })
+  .then((res) =>
+    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+  .then((res) => res.map((item) => convertMovie(item, VENDOR_URL)))
+}

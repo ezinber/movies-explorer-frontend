@@ -1,8 +1,9 @@
-import { memo } from 'react';
+import { memo, useContext } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './Profile.css';
 
-function Profile({ userData, onLogout}) {
-  const { name, email } = userData;
+function Profile({ onLogout}) {
+  const { name, email } = useContext(CurrentUserContext);
 
   return (
     <main className="profile">

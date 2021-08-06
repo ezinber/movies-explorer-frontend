@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { getAllMovies } from '../../utils/MoviesApi';
 import { filterMovies } from '../../utils/MoviesUtils';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import ProtectedRoute from '../ProtectedRoute';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
@@ -13,13 +15,20 @@ import Login from '../Login/Login';
 import NotFound from '../NotFound/NotFound';
 import Popup from '../Popup/Popup';
 import './App.css';
-import { getUser, register, signin, signout } from '../../utils/MainApi';
+import {
+  deleteMovie,
+  getSavedMovies,
+  getUser,
+  register,
+  saveMovie,
+  signin,
+  signout,
+} from '../../utils/MainApi';
 
 function App() {
   const history = useHistory();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState({})
+  const [currentUser, setCurrentUser] = useState(null)
   const [isNavigationPopupOpen, setIsNavigationPopupOpen] = useState(false);
   const [movies, setMovies] = useState(null);
   const [savedMovies, setSavedMovies] = useState([]);
@@ -34,10 +43,13 @@ function App() {
   }
 
   const handleTokenCheck = () => {
-    getUser()
-      .then((res) => {
-        setUserData(res)
-        setIsLoggedIn(true);
+    Promise.all([
+      getUser(),
+      getSavedMovies()
+    ])
+      .then(([user, movies]) => {
+        setCurrentUser(user);
+        setSavedMovies(movies);
       })
       .catch((err) => console.log(err));
   }
@@ -55,7 +67,7 @@ function App() {
         localStorage.removeItem('movies');
         setMovies([]);
         setSavedMovies([])
-        setIsLoggedIn(false);
+        setCurrentUser(null);
       })
       .catch((err) => console.log(err));
   }
@@ -80,16 +92,29 @@ function App() {
   }
 
   const handleClickMovie = (movie, isSaved) => {
-    isSaved
-    ? setSavedMovies((state) => state.filter((item) => item.id !== movie.id))
-    : setSavedMovies([movie, ...savedMovies]);
+    if (isSaved) {
+      const movieId = movie._id
+        || savedMovies.find((item) => item.id === movie.id)._id;
+
+      return deleteMovie(movieId)
+        .then(() =>
+          setSavedMovies((state) =>
+            state.filter((item) =>
+              item._id !== movieId)))
+        .catch((err) => console.log(err));
+    }
+
+    return saveMovie(movie)
+      .then((res) => {
+        setSavedMovies([res, ...savedMovies])
+      })
+      .catch((err) => console.log(err));
   }
 
-
   useEffect(() => {
-    const localMovies = JSON.parse(localStorage.getItem('movies'));
-    if (!movies && localMovies) {
-      setMovies(localMovies);
+    if (!movies) {
+      const localMovies = JSON.parse(localStorage.getItem('movies'));
+      localMovies && setMovies(localMovies);
     }
   }, [movies])
 
@@ -98,67 +123,71 @@ function App() {
   }, [])
 
   return (
-    <div className="page">
-      <Switch>
-        <Route exact path="/">
-          <Header
-            isLoggedIn={isLoggedIn}
-            onMenuClick={handleNavigationClick}
-          />
-          <Main />
-          <Footer />
-        </Route>
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="page">
+        <Switch>
+          <Route exact path="/">
+            <Header
+              onMenuClick={handleNavigationClick}
+            />
+            <Main />
+            <Footer />
+          </Route>
 
-        <Route path="/movies">
-          <Header
-            isLoggedIn={isLoggedIn}
-            onMenuClick={handleNavigationClick}
-          />
-          <Movies
-            movies={movies}
-            savedMovies={savedMovies}
-            handleSearchSubmit={handleSearchSubmit}
-            onClick={handleClickMovie}
-            isLoading={isLoading}
-          />
-          <Footer />
-        </Route>
+          <ProtectedRoute exact path="/movies">
+            <Header
+              onMenuClick={handleNavigationClick}
+            />
+            <Movies
+              movies={movies}
+              savedMovies={savedMovies}
+              handleSearchSubmit={handleSearchSubmit}
+              onClick={handleClickMovie}
+              isLoading={isLoading}
+            />
+            <Footer />
+          </ProtectedRoute>
 
-        <Route path="/saved-movies">
-          <Header
-            isLoggedIn={isLoggedIn}
-            onMenuClick={handleNavigationClick}
-          />
-          <SavedMovies
-            movies={savedMovies}
-            onClick={handleClickMovie}
-          />
-          <Footer />
-        </Route>
+          <ProtectedRoute exact path="/saved-movies">
+            <Header
+              onMenuClick={handleNavigationClick}
+            />
+            <SavedMovies
+              movies={savedMovies}
+              onClick={handleClickMovie}
+            />
+            <Footer />
+          </ProtectedRoute>
 
-        <Route path="/profile">
-          <Header
-            isLoggedIn={isLoggedIn}
-            onMenuClick={handleNavigationClick}
-          />
-          <Profile onLogout={handleSignout} userData={userData}/>
-        </Route>
+          <ProtectedRoute exact path="/profile">
+            <Header
+              onMenuClick={handleNavigationClick}
+            />
+            <Profile onLogout={handleSignout} userData={currentUser}/>
+          </ProtectedRoute>
 
-        <Route path="/register">
-          <Register onRegister={handleRegister} />
-        </Route>
+          <Route exact path="/register">
+            {!currentUser
+              ? <Register onRegister={handleRegister} />
+              : <Redirect to="/movies" />
+            }
+          </Route>
 
-        <Route path="/login">
-          <Login onLogin={handleSignin} />
-        </Route>
+          <Route exact path="/login">
+            {!currentUser
+              ? <Login onLogin={handleSignin} />
+              : <Redirect to="/movies" />
+            }
+          </Route>
 
-        <Route path="/">
-          <NotFound />
-        </Route>
-      </Switch>
+          <Route>
+            <NotFound />
+          </Route>
+        </Switch>
 
-      {isLoggedIn && <Popup isOpen={isNavigationPopupOpen} onClose={closeAllPopups} />}
-    </div>
+        {currentUser && <Popup isOpen={isNavigationPopupOpen} onClose={closeAllPopups} />}
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 

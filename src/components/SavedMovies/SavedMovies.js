@@ -19,14 +19,16 @@ function SavedMovies({ movies, onClick }) {
   return (
     <main className="movies">
       <SearchForm onSubmit={handleSearchSubmit} />
-      {movies
+      {
+        movies
         &&
           <MoviesCardList
             movies={moviesList}
             buttonStyle="delete"
             isSaved={true}
             onClick={onClick}
-          />}
+          />
+      }
     </main>
   )
 }
