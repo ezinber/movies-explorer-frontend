@@ -4,12 +4,13 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = useContext(CurrentUserContext);
+
   return (
     <Route
       render={() => {
         return isLoggedIn
           ? children
-          : <Redirect to='/login' />
+          : <Redirect to='/' />
       }}
     />
   );

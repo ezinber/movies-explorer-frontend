@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { VENDOR_URL } from '../../config';
 import { calcMovieDuration } from '../../utils/MoviesUtils';
+import { trailerPlug } from '../../utils/constants';
 import './MoviesCard.css';
 
 function MoviesCard({
@@ -17,6 +18,10 @@ function MoviesCard({
     onClick(movie, isSaved);
   }
 
+  const trailer = movie.trailerLink && movie.trailerLink.includes('http', 0)
+  ? movie.trailerLink
+  : trailerPlug;
+
   return (
     <li className="movies-card">
       <h2 className="movies-card__title" title={movie.nameRU}>
@@ -26,11 +31,19 @@ function MoviesCard({
         {duration}
       </p>
       <div className="movies-card__image-wrapper">
-        <img
-          className="movies-card__image"
-          src={VENDOR_URL + movie.image.url}
-          alt={movie.nameRU}
-        />
+        <a
+          className="button"
+          href={trailer}
+          target='_blank'
+          rel="noreferrer"
+          title="Посмотреть трейлер"
+        >
+          <img
+            className="movies-card__image"
+            src={VENDOR_URL + movie.image.url}
+            alt={movie.nameRU}
+          />
+        </a>
       </div>
       <button
         className={`button movies-card__button${isSaved ? buttonClassMod : ''}`}

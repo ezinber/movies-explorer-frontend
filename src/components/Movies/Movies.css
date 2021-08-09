@@ -7,6 +7,18 @@
   flex: 1;
 }
 
+.movies__text-empty {
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: var(--color-main, #fff);
+  flex: 1;
+}
+
 .movies__more-button {
   margin: 50px 0 80px;
   width: 100%;

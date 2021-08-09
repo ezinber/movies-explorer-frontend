@@ -2,7 +2,7 @@ import { memo, useState, useRef } from 'react';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-function SearchForm({ onSubmit }) {
+function SearchForm({ onSubmit, handleSort }) {
   const [searchValue, setSearchValue] = useState('')
   const checkbox = useRef();
 
@@ -21,9 +21,8 @@ function SearchForm({ onSubmit }) {
       <div className="search-form__input-wrapper">
         <input
           className="search-form__input"
-          type="text"
+          type="search"
           placeholder="Фильм"
-          minLength="2"
           value={searchValue}
           onChange={handleChange}
           required
@@ -34,7 +33,7 @@ function SearchForm({ onSubmit }) {
           title="Найти"
         />
       </div>
-      <FilterCheckbox inputRef={checkbox} />
+      <FilterCheckbox inputRef={checkbox} onCheck={handleSort} />
     </form>
   )
 }

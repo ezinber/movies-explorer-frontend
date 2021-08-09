@@ -14,6 +14,26 @@ export const filterMovies = (data, searchValue, isChecked) => {
   return filteredMovies;
 }
 
+
+export const filterMoviesByName = (data, searchValue) => {
+  const filteredMovies = data.filter((item) => {
+    const name = item.nameRU.toLowerCase();
+    const search = searchValue.toLowerCase();
+
+    return name.includes(search);
+  })
+
+  return filteredMovies;
+}
+
+export const filterMoviesByDuration = (data) => {
+  const filteredMovies = data.filter((item) => {
+    return item.duration <= 40;
+  })
+
+  return filteredMovies;
+}
+
 export const calcMovieDuration = (t) => {
   if (t > 59) {
     const h = (t - t % 60) / 60;

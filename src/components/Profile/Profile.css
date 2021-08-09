@@ -8,6 +8,10 @@
   flex: 1;
 }
 
+.profile_type_edit {
+  justify-content: center;
+}
+
 .profile__greetings {
   margin: 0;
   padding: 30px 0;
@@ -67,6 +71,10 @@
   font-size: 13px;
   line-height: 16px;
   text-align: center;
+}
+
+.profile__button_type_edit {
+  margin: 16px 0 0;
 }
 
 .profile__button_type_colorful {

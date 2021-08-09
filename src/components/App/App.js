@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { getAllMovies } from '../../utils/MoviesApi';
-import { filterMovies } from '../../utils/MoviesUtils';
+import { filterMoviesByName } from '../../utils/MoviesUtils';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
-import ProtectedRoute from '../ProtectedRoute';
+import { IsLoadingContext } from '../../contexts/IsLoadingContext';
+import {
+  ResponseMessageContext,
+  responseErrorMessages,
+  responseSuccessMessages,
+} from '../../contexts/ResponseMessageContext';
+import ProtectedRoute from '../../hocs/ProtectedRoute';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
@@ -14,7 +20,6 @@ import Register from '../Register/Register';
 import Login from '../Login/Login';
 import NotFound from '../NotFound/NotFound';
 import Popup from '../Popup/Popup';
-import './App.css';
 import {
   deleteMovie,
   getSavedMovies,
@@ -23,26 +28,41 @@ import {
   saveMovie,
   signin,
   signout,
+  updateUser,
 } from '../../utils/MainApi';
+import './App.css';
+import Preloader from '../Preloader/Preloader';
 
 function App() {
-  const history = useHistory();
+  const {
+    incorrectDataMessage,
+    sameEmailMessage,
+    incorrectCredentialsMessage,
+    somethingWentWrong,
+  } = responseErrorMessages;
+  const {
+    successUpdateMessage
+  } = responseSuccessMessages;
 
-  const [currentUser, setCurrentUser] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null);
   const [isNavigationPopupOpen, setIsNavigationPopupOpen] = useState(false);
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  const [responseMessage, setResponseMessage] = useState(null);
 
-  const handleRegister = (name, email, password) => {
-    register(name, email, password)
-      .then(() => {
-        handleSignin(email, password);
-      })
-      .catch((err) => console.log(err));
+  const history = useHistory();
+
+  const getDataFromStorage = () => {
+    const localMovies = JSON.parse(localStorage.getItem('movies'));
+    const lastSearch = localStorage.getItem('lastSearch') || '';
+
+    return {localMovies, lastSearch};
   }
 
   const handleTokenCheck = () => {
+    setIsChecking(true);
     Promise.all([
       getUser(),
       getSavedMovies()
@@ -51,20 +71,75 @@ function App() {
         setCurrentUser(user);
         setSavedMovies(movies);
       })
-      .catch((err) => console.log(err));
+      .catch(() => console.log('Необходима авторизация'))
+      .finally(() => {
+        setIsChecking(false);
+      });
+  }
+
+  const handleRegister = (name, email, password) => {
+    setIsLoading(true);
+    register(name, email, password)
+      .then(() => {
+        handleSignin(email, password);
+        responseMessage && setResponseMessage(null);
+      })
+      .catch((err) => {
+        if (err === 400) {
+          return setResponseMessage(incorrectDataMessage);
+        }
+        if (err === 409) {
+          return setResponseMessage(sameEmailMessage);
+        }
+        return setResponseMessage(somethingWentWrong);
+      })
+      .finally(() => setIsLoading(false));
   }
 
   const handleSignin = (email, password) => {
+    setIsLoading(true);
     signin(email, password)
-      .then(() => handleTokenCheck())
+      .then(() => {
+        responseMessage && setResponseMessage(null);
+        return handleTokenCheck();
+      })
       .then(() => history.push('/movies'))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err === 400) {
+          return setResponseMessage(incorrectDataMessage);
+        }
+        if (err === 401) {
+          return setResponseMessage(incorrectCredentialsMessage);
+        }
+        return setResponseMessage(somethingWentWrong);
+      })
+      .finally(() => setIsLoading(false));
+  }
+
+  const handleUpdateUser = (name, email) => {
+    setIsLoading(true);
+    updateUser(name, email)
+      .then((res) => {
+        setCurrentUser(res);
+        setResponseMessage(successUpdateMessage);
+      })
+      .catch((err) => {
+        if (err === 400) {
+          return setResponseMessage(incorrectDataMessage);
+        }
+        if (err === 409) {
+          return setResponseMessage(sameEmailMessage);
+        }
+        return setResponseMessage(somethingWentWrong);
+      })
+      .finally(() => setIsLoading(false));
   }
 
   const handleSignout = () => {
     signout()
       .then(() => {
         localStorage.removeItem('movies');
+        localStorage.removeItem('lastSearch');
         setMovies([]);
         setSavedMovies([])
         setCurrentUser(null);
@@ -78,14 +153,22 @@ function App() {
 
   const handleNavigationClick = () => setIsNavigationPopupOpen(true);
 
-  const handleSearchSubmit = (searchValue, isChecked) => {
+  const handleResetResponseMessage = () => setResponseMessage(null);
+
+  const handleSearchSubmit = (searchValue) => {
+    const { localMovies } = getDataFromStorage();
+    localStorage.setItem('lastSearch', searchValue);
+
+    if (localMovies) {
+      return setMovies(filterMoviesByName(localMovies, searchValue));
+    }
+
     setIsLoading(true);
     getAllMovies()
       .then((res) => {
-        const filteredMovies = filterMovies(res, searchValue, isChecked);
+        localStorage.setItem('movies', JSON.stringify(res));
 
-        localStorage.setItem('movies', JSON.stringify(filteredMovies));
-        setMovies(filteredMovies);
+        setMovies(filterMoviesByName(res, searchValue));
       })
       .catch((err) => console.log(err))
       .finally(() => setIsLoading(false));
@@ -112,81 +195,93 @@ function App() {
   }
 
   useEffect(() => {
-    if (!movies) {
-      const localMovies = JSON.parse(localStorage.getItem('movies'));
-      localMovies && setMovies(localMovies);
-    }
-  }, [movies])
+    const { localMovies, lastSearch } = getDataFromStorage();
 
-  useEffect(() => {
+    localMovies && setMovies(filterMoviesByName(localMovies, lastSearch));
     handleTokenCheck();
   }, [])
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <div className="page">
-        <Switch>
-          <Route exact path="/">
-            <Header
-              onMenuClick={handleNavigationClick}
-            />
-            <Main />
-            <Footer />
-          </Route>
+      <IsLoadingContext.Provider value={isLoading}>
+        <ResponseMessageContext.Provider value={{responseMessage, handleResetResponseMessage}}>
+          <div className="page">
 
-          <ProtectedRoute exact path="/movies">
-            <Header
-              onMenuClick={handleNavigationClick}
-            />
-            <Movies
-              movies={movies}
-              savedMovies={savedMovies}
-              handleSearchSubmit={handleSearchSubmit}
-              onClick={handleClickMovie}
-              isLoading={isLoading}
-            />
-            <Footer />
-          </ProtectedRoute>
+            {!isChecking ? (
+            <Switch>
+              <Route exact path="/">
+                <Header
+                  onMenuClick={handleNavigationClick}
+                />
+                <Main />
+                <Footer />
+              </Route>
 
-          <ProtectedRoute exact path="/saved-movies">
-            <Header
-              onMenuClick={handleNavigationClick}
-            />
-            <SavedMovies
-              movies={savedMovies}
-              onClick={handleClickMovie}
-            />
-            <Footer />
-          </ProtectedRoute>
+              <ProtectedRoute exact path="/movies" tokenCheck={handleTokenCheck}>
+                <Header
+                  onMenuClick={handleNavigationClick}
+                />
+                <Movies
+                  movies={movies}
+                  savedMovies={savedMovies}
+                  onSubmit={handleSearchSubmit}
+                  onClick={handleClickMovie}
+                />
+                <Footer />
+              </ProtectedRoute>
 
-          <ProtectedRoute exact path="/profile">
-            <Header
-              onMenuClick={handleNavigationClick}
-            />
-            <Profile onLogout={handleSignout} userData={currentUser}/>
-          </ProtectedRoute>
+              <ProtectedRoute exact path="/saved-movies">
+                <Header
+                  onMenuClick={handleNavigationClick}
+                />
+                <SavedMovies
+                  movies={savedMovies}
+                  onClick={handleClickMovie}
+                />
+                <Footer />
+              </ProtectedRoute>
 
-          <Route exact path="/register">
-            {!currentUser
-              ? <Register onRegister={handleRegister} />
-              : <Redirect to="/movies" />
-            }
-          </Route>
+              <ProtectedRoute exact path="/profile">
+                <Header
+                  onMenuClick={handleNavigationClick}
+                />
+                <Profile
+                  onLogout={handleSignout}
+                  userData={currentUser}
+                  onSubmit={handleUpdateUser}
+                />
+              </ProtectedRoute>
 
-          <Route exact path="/login">
-            {!currentUser
-              ? <Login onLogin={handleSignin} />
-              : <Redirect to="/movies" />
-            }
-          </Route>
 
-          <Route>
-            <NotFound />
-          </Route>
-        </Switch>
+              <Route exact path="/register">
+                {!currentUser
+                  ? <Register onRegister={handleRegister} />
+                  : <Redirect to="/movies" />
+                }
+              </Route>
 
-        {currentUser && <Popup isOpen={isNavigationPopupOpen} onClose={closeAllPopups} />}
-      </div>
+              <Route exact path="/login">
+                {!currentUser
+                  ? <Login onLogin={handleSignin} />
+                  : <Redirect to="/movies" />
+                }
+              </Route>
+
+              <Route>
+                <NotFound />
+              </Route>
+            </Switch>
+            ) : (
+              <Preloader />
+            )}
+
+            {currentUser && (
+              <Popup isOpen={isNavigationPopupOpen} onClose={closeAllPopups} />
+            )}
+
+          </div>
+        </ResponseMessageContext.Provider>
+      </IsLoadingContext.Provider>
     </CurrentUserContext.Provider>
   );
 }

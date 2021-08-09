@@ -20,7 +20,7 @@
 }
 
 .button {
-  transition: opacity 0.2s linear;
+  transition: all 0.2s linear;
   border: none;
   outline: none;
 }

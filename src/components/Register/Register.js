@@ -1,24 +1,35 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useFormWithValidation } from '../../hooks/useForm';
 import Form from '../Form/Form';
+import FormInput from '../FormInput/FormInput';
 import Logo from '../Logo/Logo';
 import './Register.css';
 
 function Register({ onRegister }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    values,
+    handleChange,
+    errors,
+    isValid,
+  } = useFormWithValidation();
 
-  const handleChange = (e) => {
-    e.target.name === 'name' && setName(e.target.value);
-    e.target.name === 'email' && setEmail(e.target.value);
-    e.target.name === 'password' && setPassword(e.target.value);
-  }
+  const {
+    name: nameValue = '',
+    email: emailValue = '',
+    password: passwordValue = '',
+  } = values;
+
+  const {
+    name: nameError = '',
+    email: emailError = '',
+    password: passwordError = '',
+  } = errors;
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    onRegister(name, email, password);
+    onRegister(nameValue, emailValue, passwordValue);
   }
 
   return (
@@ -31,54 +42,38 @@ function Register({ onRegister }) {
         title="Добро пожаловать!"
         buttonName="Зарегистрироваться"
         onSubmit={handleSubmit}
+        isValid={isValid}
       >
-        <span className="form__input-label">
-          Имя
-        </span>
-        <input
-          className="form__input"
+        <FormInput
+          label="Имя"
           type="text"
           name="name"
-          value={name}
+          value={nameValue}
+          error={nameError}
           onChange={handleChange}
           minLength="2"
           maxLength="30"
-          required
+          required={true}
         />
-        <span className="form__input-label form__input-label_type_error">
-          Error
-        </span>
-
-        <span className="form__input-label">
-          E-mail
-        </span>
-        <input
-          className="form__input"
+        <FormInput
+          label="E-mail"
           type="email"
           name="email"
-          value={email}
+          value={emailValue}
+          error={emailError}
           onChange={handleChange}
-          required
+          required={true}
         />
-        <span className="form__input-label form__input-label_type_error">
-          Error
-        </span>
-
-        <span className="form__input-label">
-          Пароль
-        </span>
-        <input
-          className="form__input"
+        <FormInput
+          label="Пароль"
           type="password"
           name="password"
-          value={password}
+          value={passwordValue}
+          error={passwordError}
           onChange={handleChange}
           minLength="8"
-          required
+          required={true}
         />
-        <span className="form__input-label form__input-label_type_error">
-          Error
-        </span>
       </Form>
 
       <p className="register__question">

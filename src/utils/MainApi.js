@@ -1,5 +1,9 @@
 import { BASE_URL, VENDOR_URL } from "../config";
+import { trailerPlug } from "./constants";
 import { convertMovie } from "./MoviesUtils";
+
+const handleFirstResponse = (res) => 
+  res.ok ? res.json() : Promise.reject(res.status);
 
 export const register = (
   name,
@@ -19,8 +23,7 @@ export const register = (
       password,
     }),
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+  .then((res) => handleFirstResponse(res));
 };
 
 export const signin = (email, password) => {
@@ -33,8 +36,7 @@ export const signin = (email, password) => {
     },
     body: JSON.stringify({ email, password }),
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+  .then((res) => handleFirstResponse(res));
 };
 
 export const signout = () => {
@@ -42,16 +44,29 @@ export const signout = () => {
     method: 'GET',
     credentials: 'include',
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+  .then((res) => handleFirstResponse(res));
 };
 
 export const getUser = () => {
   return fetch(`${BASE_URL}/users/me`, {
     credentials: 'include',
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+  .then((res) => handleFirstResponse(res));
+}
+
+export const updateUser = (name, email) => {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      name,
+      email,
+    }),
+  })
+  .then((res) => handleFirstResponse(res));
 }
 
 export const saveMovie = ({
@@ -66,10 +81,6 @@ export const saveMovie = ({
   nameEN,
   id,
 }) => {
-  const trailer = trailerLink.includes('http', 0)
-    ? trailerLink
-    : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-
   return fetch(`${BASE_URL}/movies`, {
     method: 'POST',
     headers: {
@@ -83,15 +94,14 @@ export const saveMovie = ({
       year: year || '...',
       description: description || '...',
       image: VENDOR_URL + image.url,
-      trailer,
+      trailer: trailerLink || trailerPlug,
       nameRU: nameRU || '...',
       nameEN: nameEN || '...',
       thumbnail: VENDOR_URL + image.formats.thumbnail.url,
       movieId: id,
     }),
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+  .then((res) => handleFirstResponse(res))
   .then((res) => convertMovie(res, VENDOR_URL))
 };
 
@@ -100,15 +110,13 @@ export const deleteMovie = (movieId) => {
     method: 'DELETE',
     credentials: 'include',
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+  .then((res) => handleFirstResponse(res));
 }
 
 export const getSavedMovies = () => {
   return fetch(`${BASE_URL}/movies`, {
     credentials: 'include',
   })
-  .then((res) =>
-    res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`))
+  .then((res) => handleFirstResponse(res))
   .then((res) => res.map((item) => convertMovie(item, VENDOR_URL)))
 }

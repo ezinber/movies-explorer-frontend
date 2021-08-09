@@ -1,34 +1,67 @@
 import { memo, useEffect, useState } from 'react';
-import { filterMovies } from '../../utils/MoviesUtils';
+import { filterMoviesByName, filterMoviesByDuration } from '../../utils/MoviesUtils';
+import { emptyMoviesListMessages } from '../../utils/constants';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import SearchForm from '../SearchForm/SearchForm';
 import './SavedMovies.css';
 
 function SavedMovies({ movies, onClick }) {
-  const [moviesList, setMoviesList] = useState([]);
+  const {
+    initialSavedMoviesMessage,
+    emptyMoviesMessage,
+  } = emptyMoviesListMessages;
 
-  const handleSearchSubmit = (searchValue, isChecked) => {
-    const filteredMovies = filterMovies(moviesList, searchValue, isChecked);
-    setMoviesList(filteredMovies);
+  const [moviesList, setMoviesList] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
+  const [emptyMessage, setEmptyMessage] = useState(initialSavedMoviesMessage);
+
+  const handleSearchSubmit = (searchValue) => {
+    if (movies.length > 0) {
+      emptyMessage === initialSavedMoviesMessage
+        && setEmptyMessage(emptyMoviesMessage);
+
+      const filteredMovies = filterMoviesByName(moviesList, searchValue);
+
+      return setMoviesList(filteredMovies);
+    }
+
+    return;
+  }
+
+  const handleSortByDuration = (check) => {
+      emptyMessage === initialSavedMoviesMessage
+        && moviesList.length > 0
+          && setEmptyMessage(emptyMoviesMessage);
+
+      setIsChecked(check);
   }
 
   useEffect(() => {
-    setMoviesList(movies);
-  }, [movies])
+    const filteredMovies = isChecked
+      ? filterMoviesByDuration(movies)
+      : movies;
+
+    setMoviesList(filteredMovies);
+  }, [movies, isChecked])
 
   return (
     <main className="movies">
-      <SearchForm onSubmit={handleSearchSubmit} />
-      {
-        movies
-        &&
-          <MoviesCardList
-            movies={moviesList}
-            buttonStyle="delete"
-            isSaved={true}
-            onClick={onClick}
-          />
-      }
+      <SearchForm
+        onSubmit={handleSearchSubmit}
+        handleSort={handleSortByDuration}
+      />
+      {moviesList.length > 0 ? (
+        <MoviesCardList
+          movies={moviesList}
+          buttonStyle="delete"
+          isSaved={true}
+          onClick={onClick}
+        />
+      ) : (
+        <span className="saved-movies__text-empty">
+          {emptyMessage}
+        </span>
+      )}
     </main>
   )
 }

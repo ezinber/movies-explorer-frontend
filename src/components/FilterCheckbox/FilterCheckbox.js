@@ -1,12 +1,16 @@
 import { memo } from 'react';
 import './FilterCheckbox.css';
 
-function FilterCheckbox({ inputRef }) {
+function FilterCheckbox({ inputRef, onCheck }) {
 
   const handleChange = () => {
-    inputRef.current.hasAttribute('checked')
+    const isChecked = inputRef.current.hasAttribute('checked');
+
+    isChecked
       ? inputRef.current.removeAttribute('checked')
       : inputRef.current.setAttribute('checked', true);
+
+    onCheck(!isChecked);
   }
 
   return (
