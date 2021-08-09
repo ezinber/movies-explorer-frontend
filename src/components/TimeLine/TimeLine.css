@@ -1,0 +1,45 @@
+.timeline {
+  padding: 110px 0 0;
+  width: 100%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: minmax(100px, min(21%, 228px)) 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.timeline__element {
+  margin: 0;
+  padding: 9px 0;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #8B8B8B
+}
+
+.timeline__element_type_colorful {
+  color: #000;
+  background-color: var(--color-accent-a, #3DDC84)
+}
+
+.timeline__element_type_grayscale {
+  color: var(--color-main, #fff);
+  background-color: var(--color-background-d, #303030)
+}
+
+@media screen and (max-width: 768px) {
+  .timeline {
+    padding: 90px 0 0;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .timeline {
+    padding: 60px 0 0;
+  }
+
+  .timeline__element {
+    font-size: 11px;
+    line-height: 13px;
+  }
+}

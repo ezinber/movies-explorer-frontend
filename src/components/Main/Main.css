@@ -1,0 +1,21 @@
+.main {
+  width: 100%;
+}
+
+.main__section-title {
+  margin: 0;
+  padding: 0 0 23px;
+  width: 100%;
+  border-bottom: 1px solid #DADADA;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 27px;
+}
+
+@media screen and (max-width: 420px) {
+  .main__section-title {
+    padding: 0 0 28px;
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
