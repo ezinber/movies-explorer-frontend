@@ -1,32 +1,66 @@
 import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useFormWithValidation } from '../../hooks/useForm';
 import Form from '../Form/Form';
+import FormInput from '../FormInput/FormInput';
 import Logo from '../Logo/Logo';
 import './Login.css';
 
-function Login() {
+function Login({ onLogin }) {
+  const {
+    values,
+    handleChange,
+    errors,
+    isValid,
+  } = useFormWithValidation();
+
+  const {
+    email: emailValue = '',
+    password: passwordValue = '',
+  } = values;
+
+  const {
+    email: emailError = '',
+    password: passwordError = '',
+  } = errors;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    onLogin(emailValue, passwordValue);
+  }
+
   return (
     <div className="login">
       <div className="login__logo-wrapper">
         <Logo />
       </div>
 
-      <Form title="Рады видеть!" buttonName="Войти">
-        <span className="form__input-label">
-          E-mail
-        </span>
-        <input className="form__input" type="email" required />
-        <span className="form__input-label form__input-label_type_error">
-          Error
-        </span>
-
-        <span className="form__input-label">
-          Пароль
-        </span>
-        <input className="form__input" type="password" minLength="8" required />
-        <span className="form__input-label form__input-label_type_error">
-          Error
-        </span>
+      <Form
+        title="Рады видеть!"
+        buttonName="Войти"
+        onSubmit={handleSubmit}
+        isValid={isValid}
+      >
+        <FormInput
+          label="E-mail"
+          type="email"
+          name="email"
+          value={emailValue}
+          error={emailError}
+          onChange={handleChange}
+          required={true}
+        />
+        <FormInput
+          label="Пароль"
+          type="password"
+          name="password"
+          value={passwordValue}
+          error={passwordError}
+          onChange={handleChange}
+          minLength="8"
+          required={true}
+        />
       </Form>
 
       <p className="login__question">

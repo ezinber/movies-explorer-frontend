@@ -4,5 +4,9 @@
 
 ---
 
+Публичный адрес:
+
+`https://movies-explorer.nomoredomains.rocks/`
+
 **Автор:**
 Михаил Березин

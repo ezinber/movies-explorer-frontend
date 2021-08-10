@@ -1,12 +1,11 @@
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import Logo from '../Logo/Logo';
-
 import './Header.css';
 
-function Header({ isLoggedIn, onMenuClick }) {
-  const handleMenuClick = () => onMenuClick();
+function Header({ onMenuClick }) {
+  const isLoggedIn = useContext(CurrentUserContext);
 
   return (
     <header className="header">
@@ -50,7 +49,7 @@ function Header({ isLoggedIn, onMenuClick }) {
               </li>
             </ul>
           </nav>
-          <button className="header__button button" type="button" onClick={handleMenuClick} />
+          <button className="header__button button" type="button" onClick={onMenuClick} />
         </>
       ) : (
         <ul className="header__menu">

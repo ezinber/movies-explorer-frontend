@@ -1,16 +1,30 @@
-import { memo } from 'react';
+import { memo, useState, useRef } from 'react';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 import './SearchForm.css';
 
-function SearchForm() {
+function SearchForm({ onSubmit, handleSort }) {
+  const [searchValue, setSearchValue] = useState('')
+  const checkbox = useRef();
+
+  const handleChange = (e) => {
+    setSearchValue(e.target.value);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    onSubmit(searchValue, checkbox.current.hasAttribute('checked'));
+  }
+
   return (
-    <form className="search-form">
+    <form className="search-form" onSubmit={handleSubmit}>
       <div className="search-form__input-wrapper">
         <input
           className="search-form__input"
-          type="text"
+          type="search"
           placeholder="Фильм"
-          minLength="2"
+          value={searchValue}
+          onChange={handleChange}
           required
         />
         <button
@@ -19,7 +33,7 @@ function SearchForm() {
           title="Найти"
         />
       </div>
-      <FilterCheckbox />
+      <FilterCheckbox inputRef={checkbox} onCheck={handleSort} />
     </form>
   )
 }
