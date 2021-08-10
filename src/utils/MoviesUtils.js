@@ -1,19 +1,4 @@
-export const filterMovies = (data, searchValue, isChecked) => {
-  const filteredMovies = data.filter((item) => {
-    const name = item.nameRU.toLowerCase();
-    const search = searchValue.toLowerCase();
-    const isShort = item.duration <= 40;
-
-    if (isChecked) {
-      return name.includes(search) && isShort;
-    }
-
-    return name.includes(search);
-  })
-
-  return filteredMovies;
-}
-
+import { ShortFilmDuration } from "../config";
 
 export const filterMoviesByName = (data, searchValue) => {
   const filteredMovies = data.filter((item) => {
@@ -28,7 +13,7 @@ export const filterMoviesByName = (data, searchValue) => {
 
 export const filterMoviesByDuration = (data) => {
   const filteredMovies = data.filter((item) => {
-    return item.duration <= 40;
+    return item.duration <= ShortFilmDuration;
   })
 
   return filteredMovies;
