@@ -20,7 +20,7 @@ function SavedMovies({ movies, onClick }) {
       emptyMessage === initialSavedMoviesMessage
         && setEmptyMessage(emptyMoviesMessage);
 
-      const filteredMovies = filterMoviesByName(moviesList, searchValue);
+      const filteredMovies = filterMoviesByName(movies, searchValue);
 
       return setMoviesList(filteredMovies);
     }
